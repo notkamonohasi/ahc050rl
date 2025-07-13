@@ -155,10 +155,21 @@ def train_one_turn(
 
 
 if __name__ == "__main__":
-    from app.models import SimpleNNModel
+    from app.const import N
+    from app.models import SimpleNNModel, UNetModel
     from app.types.config import ModelConfig, TrainConfig
+
+    model_name = "unet"
 
     model_config = ModelConfig()
     train_config = TrainConfig()
-    model = SimpleNNModel(ModelConfig())
+
+    model: BaseRLModel
+    if model_name == "simple_nn":
+        model = SimpleNNModel(ModelConfig())
+    elif model_name == "unet":
+        model = UNetModel(channels=(N, N * 2, N * 4))
+    else:
+        raise ValueError(f"Invalid model name: {model_name}")
+
     train(model, train_config)

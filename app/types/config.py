@@ -5,7 +5,7 @@ from pydantic import BaseModel
 class TrainConfig(BaseModel):
     num_episodes: int = 3000
     num_steps: int = 100
-    learning_rate: float = 0.0001
+    learning_rate: float = 1e-6
     replay_buffer_capacity: int = 10000
     batch_size: int = 3
     gamma: float = 0.9999
