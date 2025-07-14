@@ -10,12 +10,15 @@ from app.utils import calc_prob_sum, is_inside
 
 class Simulator:
     def __init__(self, rocks: list[list[bool]]) -> None:
-        self.rocks = rocks
+        self.rocks = deepcopy(rocks)
         self.n_remain_points = sum(row.count(False) for row in rocks)
         self.probs = [[1.0 / float(self.n_remain_points)] * N for _ in range(N)]
         self.score = 0.0
 
         self.probs = self.simulate(None)
+
+        self.rocks_records: list[list[list[bool]]] = []
+        self.probs_records: list[list[list[float]]] = []
 
     def simulate(self, rock_point: Point | None) -> list[list[float]]:
         """
@@ -58,7 +61,6 @@ class Simulator:
         """
         rock_point に岩を置く
         """
-        print(f"update: {rock_point}")
         assert is_inside(rock_point) is True
         assert self.rocks[rock_point.y][rock_point.x] is False
         assert self.n_remain_points > 0
@@ -66,6 +68,9 @@ class Simulator:
         self.rocks[rock_point.y][rock_point.x] = True
         self.probs = self.simulate(rock_point)
         self.score += calc_prob_sum(self.probs)
+
+        self.rocks_records.append(deepcopy(self.rocks))
+        self.probs_records.append(deepcopy(self.probs))
 
     def get_tensors(self, device: torch.device) -> tuple[Tensor, Tensor]:
         return (

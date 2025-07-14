@@ -1,5 +1,10 @@
+import datetime
+from pathlib import Path
+
 import torch
 from pydantic import BaseModel
+
+from app.const import RESULT_DIR
 
 
 class TrainConfig(BaseModel):
@@ -12,6 +17,12 @@ class TrainConfig(BaseModel):
     tau: float = 1e-3
     epsilon: float = 0.1
     device: str = "cuda" if torch.cuda.is_available() else "cpu"
+    result_dir: Path = RESULT_DIR.joinpath(
+        datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+    )
+
+    def __post_init__(self):
+        self.result_dir.mkdir(parents=True, exist_ok=True)
 
 
 class ModelConfig(BaseModel):

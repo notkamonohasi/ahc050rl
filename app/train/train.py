@@ -1,4 +1,5 @@
 import copy
+import random
 
 import torch
 from torch import Tensor
@@ -8,6 +9,7 @@ from app.models import BaseRLModel
 from app.policies import BasePolicy, EpsilonGreedyPolicy
 from app.simulator import Simulator
 from app.train.buffer import Experience, ReplayBuffer
+from app.train.eval import eval_one_episode
 from app.train.reward import calc_reward
 from app.types.config import TrainConfig
 
@@ -20,9 +22,15 @@ def train(
     buffer = ReplayBuffer(capacity=train_config.replay_buffer_capacity)
     criterion = torch.nn.MSELoss()
     optimizer = torch.optim.Adam(model.parameters(), lr=train_config.learning_rate)
-    for episode in range(train_config.num_episodes):
+
+    rocks = [[False] * N for _ in range(N)]
+    for _ in range(int(N / 2)):
+        y = random.randint(0, N - 1)
+        x = random.randint(0, N - 1)
+        rocks[y][x] = True
+
+    for episode in range(1, train_config.num_episodes + 1):
         print(f"episode: {episode}")
-        rocks = [[False] * N for _ in range(N)]
         train_one_episode(
             model,
             fixed_model,
@@ -32,6 +40,20 @@ def train(
             optimizer,
             rocks,
         )
+
+        if episode % 100 == 0:
+            save_dir = train_config.result_dir.joinpath(
+                f"episode_{str(episode).zfill(4)}"
+            )
+            save_dir.mkdir(parents=True, exist_ok=True)
+            save_path = save_dir.joinpath("episode.gif")
+            print(f"save_path: {save_path}")
+            eval_one_episode(
+                model,
+                train_config,
+                rocks,
+                save_path,
+            )
 
 
 def train_one_episode(
@@ -69,21 +91,14 @@ def train_one_turn(
     criterion: torch.nn.MSELoss,
     optimizer: torch.optim.Optimizer,
 ) -> None:
-    print()
-    print("=" * 100)
-
     device = torch.device(train_config.device)
     rocks, probs = simulator.get_tensors(device)
     q_values = model.forward(rocks, probs)
     assert q_values.size() == (N, N)
 
-    print("Q values")
-    print(q_values)
-    print()
-
     action_point = policy.sample(q_values, rocks)
     simulator.update(action_point)
-    simulator.dump()
+    # simulator.dump()
 
     # バッファに経験を追加する
     next_rocks, next_probs = simulator.get_tensors(device)
@@ -113,8 +128,8 @@ def train_one_turn(
 
     # q_valuesから対応するQ値を取得
     q_values = model.forward(batch_rocks, batch_probs)  # (batch_size, N, N)
-    batch_y = batch_actions[:, 0].unsqueeze(1)  # (batch_size, 1)
-    batch_x = batch_actions[:, 1].unsqueeze(1)  # (batch_size, 1)
+    batch_y = batch_actions[:, 0]
+    batch_x = batch_actions[:, 1]
     ids = torch.arange(batch_y.size(0), device=device)
     q_values = q_values[ids, batch_y, batch_x]
 
@@ -131,6 +146,7 @@ def train_one_turn(
     td_target = (batch_rewards + train_config.gamma * q_values_next).detach()
     loss: Tensor = criterion(td_target, q_values)
 
+    """
     print()
     print(f"loss: {loss.item()}")
     print(f"q_value: {q_values.mean().item()}")
@@ -138,6 +154,8 @@ def train_one_turn(
     print(f"reward: {batch_rewards.mean().item()}")
     print(f"td_target: {td_target.mean().item()}")
     print()
+    """
+
     optimizer.zero_grad()
     loss.backward()
     optimizer.step()
@@ -150,12 +168,8 @@ def train_one_turn(
             1.0 - train_config.tau
         )
 
-    print("=" * 100)
-    print()
-
 
 if __name__ == "__main__":
-    from app.const import N
     from app.models import SimpleNNModel, UNetModel
     from app.types.config import ModelConfig, TrainConfig
 

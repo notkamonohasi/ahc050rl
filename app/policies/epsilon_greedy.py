@@ -16,8 +16,6 @@ class EpsilonGreedyPolicy(BasePolicy):
         assert q_values.shape == mask.shape == (N, N)
 
         if random.random() < self.epsilon:
-            print("epsilon_random")
             return epsilon_random(mask)
         else:
-            print("greedy")
             return greedy(q_values, mask)
