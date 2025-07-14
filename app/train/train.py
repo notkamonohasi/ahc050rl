@@ -119,7 +119,7 @@ def train_one_turn(
     q_values = q_values[ids, batch_y, batch_x]
 
     # q_values_nextを計算
-    q_values_next = model.forward(batch_next_rocks, batch_next_probs)
+    q_values_next = fixed_model.forward(batch_next_rocks, batch_next_probs)
     q_values_next = (
         q_values_next.masked_fill(batch_next_rocks, -float("inf"))
         .view(-1, N * N)

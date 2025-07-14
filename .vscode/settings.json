@@ -1,49 +1,49 @@
 {
-    "terminal.integrated.env.linux": {
-      "PYTHONPATH": "${workspaceFolder}:${env:PYTHONPATH}"
+  "terminal.integrated.env.linux": {
+    "PYTHONPATH": "${workspaceFolder}:${env:PYTHONPATH}"
+  },
+  "terminal.integrated.env.windows": {
+    "PYTHONPATH": "${workspaceFolder};${env:PYTHONPATH}"
+  },
+  "terminal.integrated.env.osx": {
+    "PYTHONPATH": "${workspaceFolder}:${env:PYTHONPATH}"
+  },
+  "python.analysis.extraPaths": ["app"],
+  "mypy-type-checker.interpreter": ["${workspaceFolder}/.venv/bin/python"],
+  "mypy-type-checker.path": ["${workspaceFolder}/.venv/bin/mypy"],
+  "ruff.path": ["${workspaceFolder}/.venv/bin/ruff"],
+  "git.ignoreLimitWarning": true,
+  "python.terminal.activateEnvironment": false,
+  "editor.formatOnSave": true,
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[json]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[csv]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[markdown]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[shellscript]": {
+    "editor.defaultFormatter": "foxundermoon.shell-format"
+  },
+  "[toml]": {
+    "editor.defaultFormatter": "tamasfe.even-better-toml"
+  },
+  "[python]": {
+    "editor.codeActionsOnSave": {
+      "source.fixAll": "explicit"
     },
-    "terminal.integrated.env.windows": {
-      "PYTHONPATH": "${workspaceFolder};${env:PYTHONPATH}"
-    },
-    "terminal.integrated.env.osx": {
-      "PYTHONPATH": "${workspaceFolder}:${env:PYTHONPATH}"
-    },
-    "python.analysis.extraPaths": ["app"],
-    "mypy-type-checker.interpreter": ["${workspaceFolder}/.venv/bin/python"],
-    "mypy-type-checker.path": ["${workspaceFolder}/.venv/bin/mypy"],
-    "ruff.path": ["${workspaceFolder}/.venv/bin/ruff"],
-    "git.ignoreLimitWarning": true,
-    "python.terminal.activateEnvironment": false,
-    "editor.formatOnSave": true,
-    "[javascript]": {
-      "editor.defaultFormatter": "esbenp.prettier-vscode"
-    },
-    "[typescript]": {
-      "editor.defaultFormatter": "esbenp.prettier-vscode"
-    },
-    "[typescriptreact]": {
-      "editor.defaultFormatter": "esbenp.prettier-vscode"
-    },
-    "[json]": {
-      "editor.defaultFormatter": "esbenp.prettier-vscode"
-    },
-    "[csv]": {
-      "editor.defaultFormatter": "esbenp.prettier-vscode"
-    },
-    "[markdown]": {
-      "editor.defaultFormatter": "esbenp.prettier-vscode"
-    },
-    "[shellscript]": {
-      "editor.defaultFormatter": "foxundermoon.shell-format"
-    },
-    "[toml]": {
-      "editor.defaultFormatter": "tamasfe.even-better-toml",
-    },
-    "[python]": {
-      "editor.codeActionsOnSave": {
-        "source.fixAll": "explicit",
-      },
-      "editor.defaultFormatter": "charliermarsh.ruff"
-    }
-  }
-  
+    "editor.defaultFormatter": "charliermarsh.ruff"
+  },
+  "cursorpyright.analysis.extraPaths": ["app"]
+}
